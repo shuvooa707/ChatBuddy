@@ -1,0 +1,1 @@
+node ./buildFrontendApp.js
