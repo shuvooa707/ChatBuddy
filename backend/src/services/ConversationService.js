@@ -32,8 +32,6 @@ function ConversationService() {
 
 			return conversations;
 		},
-
-
 		async updateConversationName(conversationId=null, conversationName=null) {
 			if (conversationId == null || conversationName == null) return false;
 
@@ -74,7 +72,22 @@ function ConversationService() {
 				"member_user_id": userIds[1]
 			});
 			return conversation;
-		}
+		},
+		async createGroupConversation(userIds = []) {
+			if ( userIds.length < 2 ) throw Error("user ids not set");
+
+			let conversation = await Conversation.create({
+				"type": "Group"
+			});
+			for (const userId in userIds) {
+				await ConversationMember.create({
+					"conversation_id": conversation.id,
+					"member_user_id": userId
+				});
+			}
+
+			return conversation;
+		},
 	}
 }
 

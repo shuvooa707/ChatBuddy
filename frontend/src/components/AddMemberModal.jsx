@@ -80,8 +80,7 @@ function AddMemberModal({ toggleShowAddMemberModal, openedConversation }) {
 						color: '#713200',
 						marginBottom: '100px'
 					},
-				}}
-			/>
+				}}/>
 			<div id="add-member-panel">
 				<div id="overlay" className="hide"></div>
 				<div className={"py-2 bg-dark px-2 d-flex justify-content-between align-items-center text-white"} style={{ borderBlock: "1px solid grey"}}>

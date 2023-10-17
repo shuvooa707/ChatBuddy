@@ -7,14 +7,15 @@ const UserService = require("../services/UserService");
 const AuthService = require("../services/AuthService");
 const ConversationService = require("../services/ConversationService");
 const MessageService = require("../services/MessageService");
-const { Sequelize, DataTypes, Op } = require('sequelize');
+const { Sequelize, DataTypes, Op, QueryTypes} = require('sequelize');
 const Conversation = require("../Models/Conversation");
 require("../Models/_relationMapping");
 const ConversationMember = require("../Models/ConversationMember");
+const sequelize = require("../config/database_config");
 
 function UserController() {
 	return {
-		async searchUser(req, res) {
+		async searchUsers(req, res) {
 			let token = req.headers.token ?? null;
 			if ( !token ) {
 				res.send({
@@ -32,15 +33,16 @@ function UserController() {
 				return;
 			}
 
-			let input = req.body.input;
-			let myselfId = req.body.myselfId;
+			let input = req.body.input ?? null;
+			let conversationId = req.body.conversationId ?? null;
+			const query = `select distinct other_user from (select cm1.member_user_id as myself, cm2.member_user_id as other_user from conversation_members cm1
+								    left join conversation_members cm2
+								        on cm2.conversation_id = cm1.conversation_id
+								  where  cm1.member_user_id = ${user.id} and cm1.member_user_id <> cm2.member_user_id) t`;
 
-			let conversation_members = await ConversationMember.findAll({
-				where: {
-					"member_user_id": myselfId
-				}
-			});
-			conversation_members = conversation_members.map(cm => cm.member_user_id);
+			let conversation_members = await sequelize.query(query, { type: QueryTypes.SELECT });
+			conversation_members = conversation_members.map(cm => cm.other_user);
+			conversation_members.push(user.id);
 			let users = await User.findAll({
 				where: {
 					id: {
@@ -49,18 +51,18 @@ function UserController() {
 					name: {
 						[Op.like]: `%${input}%`, // Use the '%' wildcard for partial matching
 					},
-				},
-				limit: 10
+				}
 			});
 
 			let response = {
 				"status": "success",
 				"users": users,
-				"conversation_members": conversation_members
+				"conversation_members": conversation_members,
+				"userid": user.id
 			}
 			res.header("Content-Type", "application/json");
 			res.send(response);
-		}
+		},
 	}
 }
 

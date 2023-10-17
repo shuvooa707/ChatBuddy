@@ -3,7 +3,7 @@ import makeUrl from "../../util/makeUrl";
 import AuthHelper from "../../util/AuthHelper";
 import MySelfContext from "../../contexts/MySelfContext";
 
-function InitiateNewChat({setShowInitiateNewChat}) {
+function InitiateNewChat({ setShowInitiateNewChat }) {
 	const [users, setUsers] = useState([]);
 	const inputField = useRef();
 	const [myself, setMyself] = useState({});
@@ -44,7 +44,7 @@ function InitiateNewChat({setShowInitiateNewChat}) {
 	}
 
 	const initChat = async user => {
-		let url = makeUrl("api/v1/chat/initiate");
+		let url = makeUrl("api/v1/chat/initiate/private");
 		const token = AuthHelper.getToken();
 		const payload = JSON.stringify({
 			"token": token,

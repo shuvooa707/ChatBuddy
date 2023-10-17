@@ -8,8 +8,9 @@ const UserController = require("../Contollers/UserController");
 router.post("/load-chat-data", ChatController.loadPageData);
 router.post("/get-myself-data", AuthController.getMyselfData);
 router.post("/get-messages", ChatController.getMessages);
-router.post("/chat/search-user", UserController.searchUser);
-router.post("/chat/initiate", ConversationController.initiate);
+router.post("/chat/search-user", UserController.searchUsers);
+router.post("/chat/initiate/private", ConversationController.initiatePrivateChat);
+router.post("/chat/initiate/group", ConversationController.initiateGroup);
 router.post("/send-message", ChatController.sendMessage);
 
 router.post("/update-conversation-name", ConversationController.updateConversationName);

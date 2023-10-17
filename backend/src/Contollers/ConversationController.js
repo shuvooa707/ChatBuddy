@@ -68,8 +68,8 @@ function ChatController() {
 				return;
 			}
 
-			let input = req.body.input;
-			let conversationId = req.body.conversationId;
+			let input = req.body.input ?? null;
+			let conversationId = req.body.conversationId ?? null;
 
 			let conversation_members = await ConversationMember.findAll({
 				where: {
@@ -177,7 +177,44 @@ function ChatController() {
 			res.send(response);
 		},
 
-		async initiate(req, res) {
+		async initiatePrivateChat(req, res) {
+			let token = req.headers.token ?? null;
+			if ( !token ) {
+				res.send({
+					"status": "failed",
+					"message": "Unauthorized"
+				});
+				return;
+			}
+			let user = await AuthService.getUser(token);
+			if ( !user ) {
+				res.send({
+					"status": "failed",
+					"error": "unauthorized"
+				});
+				return;
+			}
+
+			let userId = req.body.userId;
+			let conversation;
+			try {
+				conversation = await ConversationService.createPrivateConversation([userId, user.id]);
+			} catch (error) {
+				res.header("Content-Type", "application/json");
+				res.send({
+					"status": "failed",
+					"error": error
+				});
+			}
+
+			res.header("Content-Type", "application/json");
+			res.send({
+				"status": "success",
+				"conversation": conversation
+			});
+		},
+
+		async initiateGroup(req, res) {
 			let token = req.headers.token ?? null;
 			if ( !token ) {
 				res.send({
@@ -214,6 +251,7 @@ function ChatController() {
 				"conversation": conversation
 			});
 		},
+
 		async getConversations(req, res) {
 			let token = req.headers.token ?? null;
 			if ( !token ) {

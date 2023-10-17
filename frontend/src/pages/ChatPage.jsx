@@ -1,12 +1,13 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
+
 import makeUrl from "../util/makeUrl";
 import AuthHelper from "../util/AuthHelper";
 import ConversationList from "../components/ConversationList";
 import Chat from "../components/Chat";
-import {useNavigate} from "react-router-dom";
 import ShowGroupMembersModal from "../components/ShowGroupMembersModal";
 import AddMemberModal from "../components/AddMemberModal";
-import toast, { Toaster } from 'react-hot-toast';
 
 
 function ChatPage() {
@@ -110,15 +111,15 @@ function ChatPage() {
 					<div className="col-lg-12">
 						<div className="card chat-app rounded-0">
 
-							{/* Contact List */}
+							{/******* Contact List *******/}
 							<ConversationList
 								openedConversation={openedConversation}
 								setOpenedConversation={setOpenedConversation}
 								conversations={conversations}
 							/>
-							{/* End Contact List */}
+							{/******* End Contact List *******/}
 
-							{/* Chat */}
+							{/******** Chat ********/}
 							<Chat
 								conversations={conversations}
 								setOpenedConversation={setOpenedConversation}
@@ -126,7 +127,7 @@ function ChatPage() {
 								toggleShowGroupMembers={toggleShowGroupMembers}
 								toggleChatPageSettings={toggleChatPageSettings}
 							/>
-							{/* End Chat */}
+							{/******** End Chat ********/}
 
 						</div>
 					</div>
@@ -153,7 +154,7 @@ function ChatPageSettings({ toggleChatPageSettings, conversationId, setConversat
 		}
 
 		let token = AuthHelper.getToken();
-		if (!token) {
+		if ( !token ) {
 			navigate("/login");
 		}
 		await fetch(url, {
@@ -167,16 +168,21 @@ function ChatPageSettings({ toggleChatPageSettings, conversationId, setConversat
 		})
 			.then(res => res.json())
 			.then(res => {
-				if ( res.status == "success" ) {
+				if ( res.status == "success" )
+				{
 					setConversations(res.conversations);
 					toast.success('Name Updated',{
-						position: 'bottom-left',
+						position: 'bottom-left'
 					})
-				} else if( res.error == "unauthorized" ) {
+				}
+				else if( res.error == "unauthorized" )
+				{
 					navigate("/login");
-				} else {
+				}
+				else
+				{
 					toast.error('Name Not Updated',{
-						position: 'bottom-left',
+						position: 'bottom-left'
 					})
 				}
 			});
@@ -191,8 +197,7 @@ function ChatPageSettings({ toggleChatPageSettings, conversationId, setConversat
 						color: '#713200',
 						marginBottom: '100px'
 					},
-				}}
-			/>
+				}}/>
 			<div className={"container"} id="char-page-settings-container" style={{ background: "black", border: "1px solid rgb(108, 108, 108)", color: "white", }}>
 				<div className="row py-2" style={{ background: "#202020", alignItems: "center", borderBottom: "1px solid rgb(108, 108, 108)" }}>
 					<div className="col-lg-10 d-flex justify-content-between">
@@ -204,7 +209,6 @@ function ChatPageSettings({ toggleChatPageSettings, conversationId, setConversat
 				</div>
 				<div className="row">
 					<div className="col-lg-8 underline-offset-1 p-5">
-
 						<table className="table-auto w-100">
 							<tbody>
 								<tr className="">
